@@ -1,0 +1,724 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Berkezzers</title>
+<meta name="description" content="Berkezzers — video izleme platformu">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23e50914'/%3E%3Ctext x='32' y='47' text-anchor='middle' font-family='Arial Black,Arial' font-weight='900' font-size='44' fill='%23fff'%3EB%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23e50914'/%3E%3Ctext x='32' y='47' text-anchor='middle' font-family='Arial Black,Arial' font-weight='900' font-size='44' fill='%23fff'%3EB%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#000; --bg2:#0f0f0f; --panel:#151515; --panel2:#1b1b1b; --line:#262626; --hover:#232323;
+  --red:#e50914; --red2:#ff2b38; --redDim:rgba(229,9,20,.15);
+  --text:#e9e9e9; --muted:#8c8c8c; --muted2:#5e5e5e; --green:#6fb04c;
+  --wrap:1440px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--text);font-family:Arial,Helvetica,"Segoe UI",sans-serif;font-size:13px;min-height:100vh;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+input,select,textarea{font:inherit;font-size:16px;color:var(--text)}
+svg.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 16px}
+::-webkit-scrollbar{width:10px}::-webkit-scrollbar-thumb{background:#2a2a2a;border-radius:6px}
+
+/* ---------- Üst bar ---------- */
+.top{background:#000;border-bottom:1px solid #111}
+.top .wrap{display:flex;align-items:center;gap:22px;height:66px}
+.logo{display:flex;align-items:center;font-weight:900;font-size:27px;letter-spacing:-1px;white-space:nowrap}
+.logo .w{color:#fff;margin-right:2px}
+.logo .r{background:var(--red);color:#fff;padding:1px 7px 2px;border-radius:5px;margin-left:2px}
+.search{flex:1;max-width:640px;display:flex;height:38px}
+.search select{background:var(--panel2);border:1px solid var(--line);border-right:none;border-radius:4px 0 0 4px;padding:0 8px;font-size:13px;outline:none}
+.search input{flex:1;min-width:0;background:#fff;color:#000;border:none;padding:0 12px;outline:none;font-size:14px}
+.search button{width:52px;background:var(--red);color:#fff;border-radius:0 4px 4px 0;display:grid;place-items:center}
+.search button:hover{background:var(--red2)}
+.top-r{margin-left:auto;display:flex;gap:10px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 14px;border-radius:4px;font-weight:700;font-size:13px;white-space:nowrap}
+.btn-red{background:var(--red);color:#fff}.btn-red:hover{background:var(--red2)}
+.btn-dark{background:var(--panel2);border:1px solid var(--line)}.btn-dark:hover{background:var(--hover)}
+.mob{display:none}
+
+/* ---------- Menü bar ---------- */
+.menu{background:var(--bg2);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:40}
+.menu .wrap{display:flex;overflow-x:auto;scrollbar-width:none}
+.menu .wrap::-webkit-scrollbar{display:none}
+.menu a{position:relative;display:flex;align-items:center;gap:6px;padding:0 16px;height:44px;font-weight:700;text-transform:uppercase;font-size:12.5px;letter-spacing:.3px;color:#cfcfcf;white-space:nowrap}
+.menu a:hover{color:#fff;background:#151515}
+.menu a.active{color:#fff}
+.menu a.active::after{content:"";position:absolute;left:12px;right:12px;bottom:0;height:3px;background:var(--red)}
+.menu a svg{color:var(--red)}
+
+/* ---------- Bölüm başlığı ---------- */
+main{padding:18px 0 30px;min-height:60vh}
+.sec-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:6px 0 14px;flex-wrap:wrap}
+.sec-head h1,.sec-head h2{font-size:20px;font-weight:700;color:#fff}
+.sec-head h1 small,.sec-head h2 small{color:var(--muted);font-weight:400;font-size:13px;margin-left:8px}
+.tabs{display:flex;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:3px}
+.tabs button{padding:6px 12px;border-radius:3px;font-weight:700;font-size:12px;color:#bbb}
+.tabs button.on{background:var(--red);color:#fff}
+.cats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.cat{padding:6px 12px;border:1px solid var(--line);background:var(--panel);border-radius:3px;font-weight:700;font-size:12px;color:#ccc}
+.cat:hover{border-color:#444;color:#fff}
+.cat.on{background:var(--red);border-color:var(--red);color:#fff}
+
+/* ---------- Video ızgarası ---------- */
+.grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:20px 12px}
+.card{min-width:0;cursor:pointer}
+.th{position:relative;aspect-ratio:16/9;background:#0b0b0b;border-radius:4px;overflow:hidden}
+.th video{width:100%;height:100%;object-fit:cover;display:block}
+.th .dur{position:absolute;right:5px;bottom:5px;background:rgba(0,0,0,.85);color:#fff;font-size:11.5px;font-weight:700;padding:2px 5px;border-radius:3px}
+.th .hd{position:absolute;left:5px;top:5px;background:var(--red);color:#fff;font-size:10px;font-weight:900;padding:1px 4px;border-radius:2px}
+.th .new{position:absolute;right:5px;top:5px;background:#fff;color:#000;font-size:10px;font-weight:900;padding:1px 5px;border-radius:2px}
+.th .pbar{position:absolute;left:0;bottom:0;height:3px;background:var(--red)}
+.card:hover .th{outline:2px solid var(--red);outline-offset:-2px}
+.card h3{margin-top:7px;font-size:13.5px;font-weight:700;line-height:1.35;color:#eee;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card:hover h3{color:var(--red2)}
+.stats{display:flex;align-items:center;gap:10px;margin-top:5px;color:var(--muted);font-size:12px}
+.stats .up{display:flex;align-items:center;gap:3px;color:var(--green);font-weight:700}
+.stats .up svg{width:13px;height:13px}
+.stats .ch{color:#aaa;font-weight:700}
+
+/* Boş alan (henüz yüklenmemiş video) */
+.slot .th{border:1px dashed #333;display:grid;place-items:center;text-align:center;background:repeating-linear-gradient(135deg,#0c0c0c 0 10px,#101010 10px 20px)}
+.slot .th div{color:var(--muted);font-size:12px;line-height:1.5;padding:8px}
+.slot .th b{display:block;color:var(--red2);font-size:22px;font-weight:900}
+.slot h3{color:var(--muted)}
+.slot:hover .th{outline-color:#444}
+
+.sk .th{background:linear-gradient(90deg,#111 25%,#1a1a1a 50%,#111 75%);background-size:200% 100%;animation:sh 1.2s infinite}
+@keyframes sh{to{background-position:-200% 0}}
+
+.pager{display:flex;justify-content:center;gap:6px;margin-top:28px}
+.pager button{min-width:36px;height:36px;border-radius:4px;background:var(--panel);border:1px solid var(--line);font-weight:700}
+.pager button.on{background:var(--red);border-color:var(--red);color:#fff}
+.pager button:disabled{opacity:.35;cursor:default}
+
+.empty{text-align:center;color:var(--muted);padding:70px 16px;font-size:14px}
+.empty b{display:block;color:#fff;font-size:18px;margin-bottom:6px}
+
+/* ---------- İzleme sayfası ---------- */
+.watch{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:20px}
+.player{background:#000;aspect-ratio:16/9;width:100%}
+.player video{width:100%;height:100%;display:block;background:#000}
+.w-title{font-size:20px;font-weight:700;color:#fff;margin:14px 0 10px;line-height:1.3}
+.w-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.w-views{font-size:15px;color:#ccc}.w-views b{color:#fff;font-size:17px}
+.rate{display:flex;align-items:center;gap:14px}
+.rbtn{display:flex;align-items:center;gap:6px;font-weight:700;color:#bbb;padding:6px 8px;border-radius:4px}
+.rbtn:hover{background:var(--panel2);color:#fff}
+.rbtn.on{color:var(--red2)}
+.rbtn.on svg{fill:currentColor}
+.rmeter{min-width:150px}
+.rmeter .pct{font-weight:900;font-size:15px;color:#fff;text-align:right}
+.rmeter .bar{height:4px;background:#444;border-radius:2px;overflow:hidden;margin-top:4px}
+.rmeter .bar div{height:100%;background:var(--red)}
+.w-acts{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}
+.w-acts .btn{height:32px}
+.w-acts .btn.on{background:var(--red);border-color:var(--red);color:#fff}
+.info{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:12px 14px;line-height:1.6}
+.info .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:6px}
+.info .lbl{color:var(--muted);font-weight:700;min-width:80px}
+.tag{background:var(--panel2);border:1px solid var(--line);padding:3px 9px;border-radius:3px;font-size:12px;font-weight:700}
+.tag:hover{border-color:var(--red);color:#fff}
+.uploader{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.uploader .av{width:38px;height:38px;border-radius:4px;background:var(--red);display:grid;place-items:center;font-weight:900;font-size:18px;color:#fff}
+.uploader b{font-size:15px;color:#fff}
+.uploader small{display:block;color:var(--muted)}
+.uploader .btn{margin-left:auto}
+.desc{color:#ccc;white-space:pre-wrap;margin-top:8px}
+
+.side h4,.below h2{font-size:15px;font-weight:700;color:#fff;margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid var(--red);display:inline-block}
+.side .card{display:flex;gap:8px;margin-bottom:10px}
+.side .th{width:150px;flex-shrink:0}
+.side .card h3{margin-top:0;font-size:12.5px}
+.side .card .stats{font-size:11px}
+.ad{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:16px;text-align:center;color:var(--muted);margin-bottom:14px}
+.ad b{display:block;color:#fff;font-size:15px;margin-bottom:4px}
+
+.below{margin-top:26px}
+.comments{margin-top:24px}
+.cform{display:flex;gap:8px;margin:10px 0 16px}
+.cform input{flex:1;min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:9px 12px;outline:none}
+.cform input:focus{border-color:var(--red)}
+.cmt{border-bottom:1px solid #161616;padding:10px 0;display:flex;gap:10px}
+.cmt .av{width:32px;height:32px;border-radius:4px;background:#2b2b2b;display:grid;place-items:center;font-weight:900}
+.cmt b{color:#fff}.cmt small{color:var(--muted);margin-left:6px}
+.cmt p{margin-top:3px;line-height:1.5;word-break:break-word}
+.cmt .del{color:var(--muted2);font-size:11px;margin-top:4px}.cmt .del:hover{color:var(--red2)}
+
+/* ---------- Footer ---------- */
+footer{background:var(--bg2);border-top:1px solid var(--line);margin-top:30px;padding:28px 0 calc(20px + env(safe-area-inset-bottom))}
+footer .cols{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+footer h5{color:#fff;font-size:13px;text-transform:uppercase;margin-bottom:10px}
+footer a{display:block;color:var(--muted);margin-bottom:6px}
+footer a:hover{color:#fff}
+footer .copy{border-top:1px solid var(--line);margin-top:20px;padding-top:14px;color:var(--muted2);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+
+/* ---------- Modal ---------- */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;z-index:80;padding:16px}
+.modal.show{display:flex}
+.box{width:100%;max-width:480px;background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--red);border-radius:6px;overflow:hidden}
+.box .bh{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line)}
+.box .bh h2{font-size:17px;color:#fff}
+.box .bb{padding:18px;max-height:70vh;overflow-y:auto}
+.drop{border:2px dashed #3a3a3a;border-radius:6px;padding:26px 14px;text-align:center;color:var(--muted);cursor:pointer}
+.drop:hover,.drop.over{border-color:var(--red);background:var(--redDim);color:#fff}
+.drop .fn{color:var(--red2);font-weight:700;margin-top:6px}
+.note{background:#1a0f10;border:1px solid #3b1418;color:#d8b3b6;border-radius:4px;padding:10px;margin-top:12px;line-height:1.5}
+.field{margin-top:12px}
+.field label{display:block;font-weight:700;color:var(--muted);margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%;background:#0c0c0c;border:1px solid var(--line);border-radius:4px;padding:9px 10px;outline:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--red)}
+.box .bf{display:flex;justify-content:flex-end;gap:8px;padding:12px 18px;border-top:1px solid var(--line)}
+
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,120px);background:var(--red);color:#fff;font-weight:700;padding:11px 16px;border-radius:4px;z-index:90;transition:transform .25s}
+.toast.show{transform:translate(-50%,0)}
+
+/* ---------- Responsive ---------- */
+@media (max-width:1280px){ .grid{grid-template-columns:repeat(4,minmax(0,1fr))} }
+@media (max-width:1050px){
+  .grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .watch{grid-template-columns:1fr}
+  .side{display:none}
+  footer .cols{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:720px){
+  .wrap{padding:0 10px}
+  .top .wrap{flex-wrap:wrap;height:auto;padding-top:10px;padding-bottom:10px;gap:10px}
+  .logo{font-size:23px}
+  .search{order:3;flex-basis:100%;max-width:none}
+  .search select{display:none}
+  .search input{border-radius:4px 0 0 4px}
+  .top-r .txt{display:none}
+  .top-r .btn{padding:0 11px}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 8px}
+  .card h3{font-size:12.5px}
+  .stats{font-size:11px;gap:7px}
+  .sec-head h1,.sec-head h2{font-size:17px}
+  .tabs{width:100%;overflow-x:auto}
+  .tabs button{flex:1;white-space:nowrap}
+  main{padding-top:12px}
+  .watch .player{margin:0 -10px;width:calc(100% + 20px)}
+  .w-title{font-size:17px}
+  .rate{width:100%;justify-content:space-between}
+  .modal{align-items:flex-end;padding:0}
+  .box{max-width:none;border-radius:10px 10px 0 0}
+  .toast{bottom:20px}
+}
+@media (max-width:380px){ .grid{grid-template-columns:1fr} }
+
+/* =================== PROFESYONEL GÖRÜNÜM =================== */
+body{font-family:Inter,Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased;
+  background:radial-gradient(1200px 500px at 50% -200px,rgba(229,9,20,.10),transparent 70%),#000}
+::selection{background:var(--red);color:#fff}
+.top{background:linear-gradient(180deg,#0b0b0b,#000)}
+.logo{font-size:28px;letter-spacing:-1.2px}
+.logo .r{box-shadow:0 0 18px rgba(229,9,20,.55);border-radius:6px}
+.search{border-radius:6px;box-shadow:0 0 0 1px #1d1d1d}
+.search:focus-within{box-shadow:0 0 0 2px var(--red)}
+.search select{border-radius:6px 0 0 6px}
+.search button{border-radius:0 6px 6px 0}
+.btn{border-radius:6px;transition:background .15s,transform .1s}
+.btn:active{transform:scale(.97)}
+.menu{background:rgba(12,12,12,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.menu a{font-weight:700;letter-spacing:.5px}
+
+.sec-head h1,.sec-head h2{padding-left:12px;border-left:4px solid var(--red);line-height:1.15}
+.cat{border-radius:999px;padding:7px 14px;transition:all .15s}
+.tabs{border-radius:8px}.tabs button{border-radius:6px;transition:background .15s}
+
+/* Kartlar */
+.th{border-radius:8px;transition:transform .2s,box-shadow .2s}
+.th::after{content:"";position:absolute;inset:auto 0 0 0;height:40%;background:linear-gradient(transparent,rgba(0,0,0,.55));pointer-events:none}
+.th .dur,.th .hd,.th .new,.th .pbar{z-index:2}
+.card:hover .th{outline:none;transform:translateY(-3px);box-shadow:0 12px 26px rgba(229,9,20,.28),0 0 0 2px var(--red)}
+.card h3{font-weight:600;margin-top:9px}
+.stats .ch{display:flex;align-items:center;gap:5px}
+.stats .ch::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--red)}
+.slot:hover .th{transform:none;box-shadow:0 0 0 1px #444}
+
+/* Öne çıkan */
+.hero{position:relative;border-radius:12px;overflow:hidden;margin-bottom:18px;cursor:pointer;aspect-ratio:21/8;min-height:220px;background:#090909;
+  box-shadow:0 20px 50px rgba(0,0,0,.6);border:1px solid #1a1a1a}
+.hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero-ov{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;gap:10px;padding:34px;
+  background:linear-gradient(90deg,rgba(0,0,0,.92) 0%,rgba(0,0,0,.6) 45%,transparent 75%),linear-gradient(0deg,rgba(0,0,0,.7),transparent 50%)}
+.hero-tag{align-self:flex-start;background:var(--red);color:#fff;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:5px 10px;border-radius:4px}
+.hero h2{font-size:34px;font-weight:900;letter-spacing:-1px;color:#fff;max-width:640px;line-height:1.1}
+.hero p{color:#bdbdbd;font-size:14px}
+.hero .btn{align-self:flex-start;height:44px;padding:0 22px;font-size:14px}
+.hero:hover .btn-red{background:var(--red2)}
+
+.statbar{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:26px}
+.stat{background:linear-gradient(180deg,#121212,#0c0c0c);border:1px solid #1d1d1d;border-radius:10px;padding:14px 16px}
+.stat b{display:block;font-size:22px;font-weight:900;color:#fff}
+.stat span{color:var(--muted);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.stat:first-child b{color:var(--red2)}
+
+/* İzleme */
+.player{border-radius:10px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.7)}
+.watch.theater{grid-template-columns:1fr}
+.watch.theater .side{display:none}
+.w-acts .btn.on{box-shadow:0 0 14px rgba(229,9,20,.4)}
+.speed{height:32px;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:0 8px;font-size:13px;font-weight:700;outline:none}
+.info,.ad{border-radius:10px}
+.ad{background:linear-gradient(135deg,#2a0507,#0e0e0e);border-color:#3a0b0f}
+.ad b{color:var(--red2)}
+.uploader .av{border-radius:8px;box-shadow:0 0 12px rgba(229,9,20,.4)}
+
+/* Yukarı çık */
+.totop{position:fixed;right:18px;bottom:22px;width:44px;height:44px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;
+  z-index:60;opacity:0;pointer-events:none;transform:translateY(10px);transition:all .2s;box-shadow:0 8px 20px rgba(229,9,20,.4)}
+.totop.show{opacity:1;pointer-events:auto;transform:none}
+
+/* Mobil alt menü */
+.bnav{display:none}
+@media (max-width:1050px){ .statbar{grid-template-columns:repeat(2,1fr)} }
+@media (max-width:720px){
+  .hero{aspect-ratio:16/10;border-radius:10px}
+  .hero-ov{padding:18px;background:linear-gradient(0deg,rgba(0,0,0,.95),rgba(0,0,0,.2) 70%)}
+  .hero h2{font-size:22px}
+  .hero p{font-size:12px}
+  .hero .btn{height:38px}
+  .stat{padding:10px 12px}.stat b{font-size:18px}
+  .menu{display:none}
+  body{padding-bottom:calc(62px + env(safe-area-inset-bottom))}
+  .bnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(8,8,8,.96);backdrop-filter:blur(12px);
+    border-top:1px solid #1c1c1c;padding-bottom:env(safe-area-inset-bottom)}
+  .bnav a,.bnav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0 7px;font-size:10.5px;font-weight:600;color:#9a9a9a}
+  .bnav a.active{color:#fff}.bnav a.active svg{color:var(--red)}
+  .bnav svg.i{width:21px;height:21px}
+  .bnav .plus svg{width:36px;height:36px;padding:8px;border-radius:50%;background:var(--red);color:#fff;stroke-width:2.6;box-shadow:0 4px 14px rgba(229,9,20,.5)}
+  .totop{bottom:calc(76px + env(safe-area-inset-bottom))}
+  .toast{bottom:calc(76px + env(safe-area-inset-bottom))}
+  .theaterBtn{display:none!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ ÜST BAR ============ -->
+<div class="top"><div class="wrap">
+  <a class="logo" href="#/"><span class="w">Berke</span><span class="r">zzers</span></a>
+  <form class="search" id="searchForm">
+    <select id="sType"><option>Videolar</option><option>Kategoriler</option></select>
+    <input id="q" type="search" placeholder="Video ara..." autocomplete="off" enterkeyhint="search">
+    <button aria-label="Ara"><svg class="i"><use href="#i-search"/></svg></button>
+  </form>
+  <div class="top-r">
+    <button class="btn btn-red" id="uploadBtn"><svg class="i"><use href="#i-upload"/></svg><span class="txt">Video Yükle</span></button>
+  </div>
+</div></div>
+
+<!-- ============ MENÜ ============ -->
+<nav class="menu"><div class="wrap">
+  <a href="#/" data-r="home"><svg class="i"><use href="#i-home"/></svg>Ana Sayfa</a>
+  <a href="#/populer" data-r="populer">En Çok İzlenen</a>
+  <a href="#/begenilen" data-r="begenilen">En Beğenilen</a>
+  <a href="#/yeni" data-r="yeni">En Yeni</a>
+  <a href="#/kategoriler" data-r="kategoriler">Kategoriler</a>
+  <a href="#/favoriler" data-r="favoriler">Favorilerim</a>
+  <a href="#/gecmis" data-r="gecmis">Geçmiş</a>
+</div></nav>
+
+<main><div class="wrap" id="app"></div></main>
+
+<!-- ============ FOOTER ============ -->
+<footer><div class="wrap">
+  <div class="cols">
+    <div><h5>Berkezzers</h5><a href="#/">Ana Sayfa</a><a href="#/yeni">En Yeni Videolar</a><a href="#/populer">En Çok İzlenenler</a></div>
+    <div><h5>Keşfet</h5><a href="#/kategoriler">Kategoriler</a><a href="#/begenilen">En Beğenilenler</a></div>
+    <div><h5>Hesabım</h5><a href="#/favoriler">Favorilerim</a><a href="#/gecmis">İzleme Geçmişi</a></div>
+    <div><h5>Bilgi</h5><a href="#/">Hakkımızda</a><a href="#/">İletişim</a></div>
+  </div>
+  <div class="copy"><span>© <span id="yr"></span> Berkezzers. Tüm hakları saklıdır.</span><span>Berkezzers kırmızı-siyah video platformu</span></div>
+</div></footer>
+
+<!-- ============ YÜKLEME PENCERESİ ============ -->
+<div class="modal" id="modal">
+  <div class="box">
+    <div class="bh"><h2>Video Yükle</h2><button id="closeModal" aria-label="Kapat"><svg class="i"><use href="#i-x"/></svg></button></div>
+    <div class="bb">
+      <div class="drop" id="drop"><b>Video seç veya buraya sürükle</b><br>MP4 · WebM · MOV<div class="fn" id="fileName"></div></div>
+      <input type="file" id="fileIn" accept="video/*" hidden>
+      <div class="note">Buradan yüklenen video sadece bu cihazda görünür. Herkesin görmesi için GitHub'a <b>video1.mp4 … video10.mp4</b> diye yükle.</div>
+      <div class="field"><label>Başlık</label><input type="text" id="upTitle" maxlength="100"></div>
+      <div class="field"><label>Kategori</label><select id="upCat"></select></div>
+      <div class="field"><label>Açıklama</label><textarea id="upDesc" rows="3" maxlength="2000"></textarea></div>
+    </div>
+    <div class="bf"><button class="btn btn-dark" id="cancelUp">İptal</button><button class="btn btn-red" id="doUp">Yükle</button></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<button class="totop" id="totop" aria-label="Yukarı çık"><svg class="i"><use href="#i-top"/></svg></button>
+
+<!-- Mobil alt menü -->
+<nav class="bnav">
+  <a href="#/" data-r="home"><svg class="i"><use href="#i-home"/></svg>Ana Sayfa</a>
+  <a href="#/populer" data-r="populer"><svg class="i"><use href="#i-fire"/></svg>Popüler</a>
+  <button class="plus" id="uploadBtn2" aria-label="Video yükle"><svg class="i"><use href="#i-plus"/></svg></button>
+  <a href="#/favoriler" data-r="favoriler"><svg class="i"><use href="#i-heart"/></svg>Favoriler</a>
+  <a href="#/kategoriler" data-r="kategoriler"><svg class="i"><use href="#i-grid"/></svg>Kategori</a>
+</nav>
+
+<!-- ============ İKONLAR ============ -->
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4m-5 5 5-5 5 5M4 20h16"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M7 10v11H4a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm0 0 4-7a2.5 2.5 0 0 1 3 2.5V9h5a2 2 0 0 1 2 2.3l-1.3 8A2 2 0 0 1 17.7 21H7"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M17 14V3h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1zm0 0-4 7a2.5 2.5 0 0 1-3-2.5V15H5a2 2 0 0 1-2-2.3l1.3-8A2 2 0 0 1 6.3 3H17"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-9-9a4.8 4.8 0 0 1 9-3 4.8 4.8 0 0 1 9 3c-2 4.6-9 9-9 9z"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><path d="M14 5l7 7-7 7M21 12H9a6 6 0 0 0-6 6v1"/></symbol>
+  <symbol id="i-dl" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 20h16"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-top" viewBox="0 0 24 24"><path d="m6 15 6-6 6 6"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-fire" viewBox="0 0 24 24"><path d="M12 22c4 0 7-2.7 7-7 0-4-3-6.5-4-10-1.5 2-2 3.5-2 5-1.5-1-3-3-3-6C6 7 5 11 5 15c0 4.3 3 7 7 7z"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4v16l13-8z" fill="currentColor"/></symbol>
+  <symbol id="i-film" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4"/></symbol>
+  <symbol id="i-trash"viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></symbol>
+</svg>
+
+<script>
+/* =====================================================================
+   AYARLAR — 10 VİDEO ALANI
+   ---------------------------------------------------------------------
+   Videolarını GitHub'a index.html ile AYNI yere şu isimlerle yükle:
+       video1.mp4, video2.mp4 ... video10.mp4
+   Sitede 10 kutu hazır durur. Yüklediğin video kendi kutusunda açılır,
+   yüklemediklerin "Yakında" olarak görünür. 10'dan fazla yüklersen
+   (video11.mp4 ...) onlar da otomatik eklenir.
+
+   Başlık / kategori / açıklama / etiketleri aşağıdan değiştir.
+   ===================================================================== */
+const KANAL_ADI = "Berkezzers";
+const KLASOR    = "";          // videolar "videolar/" klasöründeyse buraya "videolar/" yaz
+const UZANTI    = ".mp4";
+const VIDEO_SAYISI = 10;
+
+const BILGILER = {
+  1:  { baslik: "Video 1",  kategori: "Vlog",      aciklama: "", etiketler: ["vlog"],      tarih: "2026-10-30" },
+  2:  { baslik: "Video 2",  kategori: "Oyun",      aciklama: "", etiketler: ["oyun"],      tarih: "2026-10-30" },
+  3:  { baslik: "Video 3",  kategori: "Müzik",     aciklama: "", etiketler: ["müzik"],     tarih: "2026-10-30" },
+  4:  { baslik: "Video 4",  kategori: "Eğlence",   aciklama: "", etiketler: ["eğlence"],   tarih: "2026-10-30" },
+  5:  { baslik: "Video 5",  kategori: "Spor",      aciklama: "", etiketler: ["spor"],      tarih: "2026-10-30" },
+  6:  { baslik: "Video 6",  kategori: "Teknoloji", aciklama: "", etiketler: ["teknoloji"], tarih: "2026-10-30" },
+  7:  { baslik: "Video 7",  kategori: "Eğitim",    aciklama: "", etiketler: ["eğitim"],    tarih: "2026-10-30" },
+  8:  { baslik: "Video 8",  kategori: "Vlog",      aciklama: "", etiketler: ["vlog"],      tarih: "2026-10-30" },
+  9:  { baslik: "Video 9",  kategori: "Oyun",      aciklama: "", etiketler: ["oyun"],      tarih: "2026-10-30" },
+  10: { baslik: "Video 10", kategori: "Diğer",     aciklama: "", etiketler: [],            tarih: "2026-10-30" },
+};
+
+const KATEGORILER = ["Vlog","Oyun","Müzik","Eğlence","Eğitim","Spor","Teknoloji","Diğer"];
+const SAYFA_BASINA = 20;
+/* ===================================================================== */
+
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ic=n=>`<svg class="i"><use href="#i-${n}"/></svg>`;
+const LS={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const fmtNum=n=>n>=1e6?(n/1e6).toFixed(1).replace(".",",")+"M":n>=1e3?(n/1e3).toFixed(1).replace(".",",")+"B":String(n);
+const fmtDur=d=>{if(!isFinite(d)||!d)return"";d=Math.round(d);const h=Math.floor(d/3600),m=Math.floor(d%3600/60),s=d%60;return(h?h+":"+String(m).padStart(2,"0"):m)+":"+String(s).padStart(2,"0")};
+function ago(t){const s=(Date.now()-t)/1e3;if(s<3600)return Math.max(1,Math.floor(s/60))+" dk önce";if(s<86400)return Math.floor(s/3600)+" saat önce";if(s<2592e3)return Math.floor(s/86400)+" gün önce";if(s<31536e3)return Math.floor(s/2592e3)+" ay önce";return Math.floor(s/31536e3)+" yıl önce"}
+function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("show");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("show"),2400)}
+$("#yr").textContent=new Date().getFullYear();
+
+/* ---------- Cihaza yüklenen videolar (IndexedDB) ---------- */
+let db=null;
+const openDB=()=>new Promise(r=>{try{const q=indexedDB.open("berkezzers",1);q.onupgradeneeded=()=>q.result.createObjectStore("v",{keyPath:"id"});q.onsuccess=()=>{db=q.result;r()};q.onerror=()=>r()}catch(e){r()}});
+const dbAll=()=>new Promise(r=>{if(!db)return r([]);try{const q=db.transaction("v").objectStore("v").getAll();q.onsuccess=()=>r(q.result||[]);q.onerror=()=>r([])}catch(e){r([])}});
+const dbPut=v=>new Promise(r=>{if(!db)return r(false);try{const t=db.transaction("v","readwrite");t.objectStore("v").put(v);t.oncomplete=()=>r(true);t.onerror=()=>r(false)}catch(e){r(false)}});
+const dbDel=id=>new Promise(r=>{if(!db)return r();try{const t=db.transaction("v","readwrite");t.objectStore("v").delete(id);t.oncomplete=r;t.onerror=r}catch(e){r()}});
+
+/* ---------- Video var mı kontrolü ---------- */
+function probe(src){
+  return new Promise(res=>{
+    const v=document.createElement("video"); v.preload="metadata"; v.muted=true;
+    const done=ok=>{clearTimeout(to);res(ok?{ok:true,dur:v.duration}:{ok:false});v.removeAttribute("src");v.load()};
+    const to=setTimeout(()=>done(false),15000);
+    v.onloadedmetadata=()=>done(true); v.onerror=()=>done(false); v.src=src;
+  });
+}
+async function discover(){
+  const res={};
+  const first=Array.from({length:VIDEO_SAYISI},(_,i)=>i+1);
+  (await Promise.all(first.map(n=>probe(KLASOR+"video"+n+UZANTI)))).forEach((r,i)=>res[first[i]]=r);
+  let n=VIDEO_SAYISI+1, miss=0;            // 10'dan sonrakileri de ara
+  while(miss<2 && n<=300){ const r=await probe(KLASOR+"video"+n+UZANTI); if(r.ok){res[n]=r;miss=0}else miss++; n++ }
+  return res;
+}
+
+/* ---------- Veri ---------- */
+let videos=[], loaded=false, cat="", sort="onerilen", page=1;
+
+async function init(){
+  render();
+  await openDB();
+  const [found,locals]=await Promise.all([discover(),dbAll()]);
+  const nums=new Set([...Array.from({length:VIDEO_SAYISI},(_,i)=>i+1),...Object.keys(found).map(Number)]);
+  const remote=[...nums].sort((a,b)=>a-b).map(n=>{
+    const b=BILGILER[n]||{}, f=found[n]||{};
+    return {id:"v"+n,num:n,src:KLASOR+"video"+n+UZANTI,file:"video"+n+UZANTI,ok:!!f.ok,dur:f.dur||0,
+      title:b.baslik||("Video "+n),category:b.kategori||"Diğer",desc:b.aciklama||"",tags:b.etiketler||[],
+      date:b.tarih?new Date(b.tarih).getTime()+n*1000:Date.now()-n*36e5,local:false};
+  });
+  const loc=locals.map(v=>({...v,src:URL.createObjectURL(v.blob),ok:true,tags:[],local:true}));
+  videos=[...loc,...remote];
+  loaded=true; render();
+}
+
+const S=k=>LS.get(k,{});
+const views=id=>S("views")[id]||0;
+function rating(id){ const l=S("likes")[id]?1:0, d=S("dislikes")[id]?1:0; return l+d?Math.round(l/(l+d)*100):null }
+const ready=()=>videos.filter(v=>v.ok);
+
+/* ---------- Kartlar ---------- */
+function card(v){
+  if(!v.ok) return `<div class="card slot" title="${esc(v.file)} bekleniyor">
+    <div class="th"><div><b>${v.num}</b>Yakında<br><small>${esc(v.file)}</small></div></div>
+    <h3>${esc(v.title)}</h3><div class="stats"><span>Henüz yüklenmedi</span></div></div>`;
+  const pr=LS.get("progress",{})[v.id], pct=pr&&v.dur?Math.min(100,pr/v.dur*100):0, r=rating(v.id);
+  return `<div class="card" data-open="${esc(v.id)}">
+    <div class="th"><video src="${esc(v.src)}#t=0.5" preload="metadata" muted playsinline data-prev
+      onloadedmetadata="this.parentNode.querySelector('.dur').textContent=fmtDur(this.duration)"></video>
+      <span class="hd">HD</span>${Date.now()-v.date<3*864e5?'<span class="new">YENİ</span>':""}
+      <span class="dur">${fmtDur(v.dur)}</span>${pct>2?`<span class="pbar" style="width:${pct}%"></span>`:""}</div>
+    <h3>${esc(v.title)}</h3>
+    <div class="stats"><span class="ch">${v.local?"Cihazım":KANAL_ADI}</span><span>${fmtNum(views(v.id))} izlenme</span>
+      ${r!==null?`<span class="up">${ic("up")}${r}%</span>`:""}</div></div>`;
+}
+const skel=n=>`<div class="grid">${Array(n).fill('<div class="card sk"><div class="th"></div></div>').join("")}</div>`;
+
+/* ---------- Sayfalar ---------- */
+function route(){const h=location.hash.replace(/^#\/?/,"");const[p,...r]=h.split("/");return{page:p||"home",arg:decodeURIComponent(r.join("/"))}}
+function render(){
+  const {page:pg,arg}=route();
+  $$("[data-r]").forEach(a=>a.classList.toggle("active",a.dataset.r===pg));
+  const pl=$("#player"); if(pl&&pg!=="izle") pl.pause();
+  document.title="Berkezzers";
+  if(pg==="izle") return watch(arg);
+  const app=$("#app");
+  if(!loaded){ app.innerHTML=`<div class="sec-head"><h1>Önerilen Videolar</h1></div>`+skel(10); return }
+
+  const q=$("#q").value.trim().toLowerCase();
+  let list=videos.slice(), title="Önerilen Videolar", tabs=true, empty="Bu bölümde video yok.";
+
+  if(pg==="kategoriler"){
+    app.innerHTML=`<div class="sec-head"><h1>Kategoriler</h1></div><div class="grid">${KATEGORILER.map(c=>{
+      const vs=ready().filter(v=>v.category===c), f=vs[0];
+      return `<a class="card" href="#/kategori/${encodeURIComponent(c)}"><div class="th">${f?`<video src="${esc(f.src)}#t=1" preload="metadata" muted></video>`:""}
+        <span class="dur">${vs.length} video</span></div><h3>${c}</h3></a>`}).join("")}</div>`;
+    return scrollTo(0,0);
+  }
+  if(pg==="kategori"){ list=list.filter(v=>v.category===arg); title=arg; }
+  else if(pg==="populer"){ list=ready().sort((a,b)=>views(b.id)-views(a.id)); title="En Çok İzlenen"; tabs=false }
+  else if(pg==="begenilen"){ list=ready().sort((a,b)=>(rating(b.id)??-1)-(rating(a.id)??-1)); title="En Beğenilen"; tabs=false }
+  else if(pg==="yeni"){ list=ready().sort((a,b)=>b.date-a.date); title="En Yeni"; tabs=false }
+  else if(pg==="favoriler"){ const f=S("favs"); list=ready().filter(v=>f[v.id]); title="Favorilerim"; tabs=false; empty="Henüz favori video yok. İzlerken ♥ Favori butonuna bas." }
+  else if(pg==="gecmis"){ list=LS.get("history",[]).map(id=>videos.find(v=>v.id===id)).filter(Boolean); title="İzleme Geçmişi"; tabs=false; empty="Henüz video izlemedin." }
+
+  if(q){ list=list.filter(v=>v.ok&&(v.title+" "+v.desc+" "+v.category+" "+v.tags.join(" ")).toLowerCase().includes(q)); title=`“${esc(q)}” sonuçları`; tabs=false; empty="Aramana uygun video bulunamadı." }
+  if(pg==="home"&&cat) list=list.filter(v=>v.category===cat);
+  if(tabs){
+    if(sort==="izlenen") list.sort((a,b)=>(b.ok-a.ok)||views(b.id)-views(a.id));
+    else if(sort==="puan") list.sort((a,b)=>(b.ok-a.ok)||(rating(b.id)??-1)-(rating(a.id)??-1));
+    else if(sort==="yeni") list.sort((a,b)=>(b.ok-a.ok)||b.date-a.date);
+  }
+
+  const pages=Math.max(1,Math.ceil(list.length/SAYFA_BASINA)); if(page>pages) page=pages;
+  const slice=list.slice((page-1)*SAYFA_BASINA,page*SAYFA_BASINA);
+  const okCount=list.filter(v=>v.ok).length;
+
+  let html="";
+  if(pg==="home"&&!q&&!cat&&page===1){
+    const rd=ready();
+    if(rd.length){
+      const f=rd.slice().sort((a,b)=>views(b.id)-views(a.id)||b.date-a.date)[0];
+      html+=`<div class="hero" data-open="${esc(f.id)}"><video src="${esc(f.src)}#t=1" autoplay muted loop playsinline preload="metadata"></video>
+        <div class="hero-ov"><span class="hero-tag">★ Öne Çıkan</span><h2>${esc(f.title)}</h2>
+        <p>${KANAL_ADI} · ${fmtNum(views(f.id))} izlenme · ${esc(f.category)}${f.dur?" · "+fmtDur(f.dur):""}</p>
+        <button class="btn btn-red">${ic("play")}Şimdi İzle</button></div></div>`;
+    }
+    const totalViews=Object.values(S("views")).reduce((a,b)=>a+b,0);
+    html+=`<div class="statbar">
+      <div class="stat"><b>${rd.length}</b><span>Video</span></div>
+      <div class="stat"><b>${new Set(rd.map(v=>v.category)).size}</b><span>Kategori</span></div>
+      <div class="stat"><b>${fmtNum(totalViews)}</b><span>Toplam İzlenme</span></div>
+      <div class="stat"><b>${fmtDur(rd.reduce((a,v)=>a+(v.dur||0),0))||"0:00"}</b><span>Toplam Süre</span></div></div>`;
+  }
+  html+=`<div class="sec-head"><h1>${title}<small>${okCount} video</small></h1>
+    ${tabs?`<div class="tabs">${[["onerilen","Önerilen"],["izlenen","En Çok İzlenen"],["puan","En İyi Puan"],["yeni","En Yeni"]].map(([k,t])=>`<button data-sort="${k}" class="${sort===k?"on":""}">${t}</button>`).join("")}</div>`:""}</div>`;
+  if(pg==="home"&&!q) html+=`<div class="cats"><button class="cat ${!cat?"on":""}" data-cat="">Tümü</button>${KATEGORILER.map(c=>`<button class="cat ${cat===c?"on":""}" data-cat="${c}">${c}</button>`).join("")}</div>`;
+  if(pg==="gecmis"&&list.length) html+=`<button class="btn btn-dark" id="clearHist" style="margin-bottom:14px">${ic("trash")}Geçmişi temizle</button>`;
+  html+=slice.length?`<div class="grid">${slice.map(card).join("")}</div>`:`<div class="empty"><b>Video yok</b>${empty}</div>`;
+  if(pages>1){
+    html+=`<div class="pager"><button data-page="${page-1}" ${page<=1?"disabled":""}>‹</button>`;
+    for(let i=1;i<=pages;i++) html+=`<button data-page="${i}" class="${i===page?"on":""}">${i}</button>`;
+    html+=`<button data-page="${page+1}" ${page>=pages?"disabled":""}>›</button></div>`;
+  }
+  app.innerHTML=html; scrollTo(0,0);
+}
+
+function watch(id){
+  const app=$("#app");
+  if(!loaded){ app.innerHTML=`<div class="watch"><div class="card sk"><div class="th"></div></div></div>`; return }
+  const v=videos.find(x=>x.id===id&&x.ok);
+  if(!v){ app.innerHTML=`<div class="empty"><b>Video bulunamadı</b><a href="#/" style="color:var(--red2)">Ana sayfaya dön</a></div>`; return }
+  document.title=v.title+" - Berkezzers";
+  const vs=S("views"); vs[id]=(vs[id]||0)+1; LS.set("views",vs);
+  LS.set("history",[id,...LS.get("history",[]).filter(x=>x!==id)].slice(0,200));
+  const others=ready().filter(x=>x!==v);
+  const related=[...others.filter(x=>x.category===v.category),...others.filter(x=>x.category!==v.category)];
+
+  app.innerHTML=`<div class="watch"><div>
+    <div class="player"><video id="player" src="${esc(v.src)}" controls autoplay playsinline preload="auto"></video></div>
+    <h1 class="w-title">${esc(v.title)}</h1>
+    <div class="w-bar">
+      <div class="w-views"><b>${fmtNum(vs[id])}</b> izlenme</div>
+      <div class="rate">
+        <button class="rbtn" id="likeBtn">${ic("up")}<span>Beğen</span></button>
+        <button class="rbtn" id="disBtn">${ic("down")}</button>
+        <div class="rmeter"><div class="pct" id="pct"></div><div class="bar"><div id="pbar"></div></div></div>
+      </div>
+    </div>
+    <div class="w-acts">
+      <button class="btn btn-dark" id="favBtn">${ic("heart")}<span>Favori</span></button>
+      <button class="btn btn-dark" id="shareBtn">${ic("share")}Paylaş</button>
+      <a class="btn btn-dark" href="${esc(v.src)}" download>${ic("dl")}İndir</a>
+      <button class="btn btn-dark theaterBtn" id="thBtn">${ic("film")}Sinema Modu</button>
+      <select class="speed" id="speed" aria-label="Oynatma hızı">${[0.5,0.75,1,1.25,1.5,2].map(s=>`<option value="${s}" ${s===1?"selected":""}>${s}x</option>`).join("")}</select>
+      ${v.local?`<button class="btn btn-dark" id="delBtn">${ic("trash")}Sil</button>`:""}
+    </div>
+    <div class="info">
+      <div class="uploader"><div class="av">${v.local?"C":"B"}</div><div><b>${v.local?"Cihazım":KANAL_ADI}</b><small>${ago(v.date)} yüklendi</small></div>
+        <button class="btn btn-red" id="subBtn"></button></div>
+      <div class="row"><span class="lbl">Kategori:</span><a class="tag" href="#/kategori/${encodeURIComponent(v.category)}">${esc(v.category)}</a></div>
+      ${v.tags.length?`<div class="row"><span class="lbl">Etiketler:</span>${v.tags.map(t=>`<button class="tag" data-tag="${esc(t)}">${esc(t)}</button>`).join("")}</div>`:""}
+      ${v.desc?`<div class="desc">${esc(v.desc)}</div>`:""}
+    </div>
+    <div class="comments"><h2 style="font-size:15px;color:#fff" id="cTitle"></h2>
+      <form class="cform" id="cform"><input id="cIn" placeholder="Yorum yaz..." maxlength="500"><button class="btn btn-red">Gönder</button></form>
+      <div id="cList"></div></div>
+  </div>
+  <aside class="side">
+    <div class="ad"><b>Berkezzers</b>Yeni videolar için takipte kal!</div>
+    <h4>Sıradaki Videolar</h4>
+    ${related.slice(0,8).map(card).join("")||'<p style="color:var(--muted)">Başka video yok.</p>'}
+  </aside></div>
+  ${related.length?`<div class="below"><h2>Benzer Videolar</h2><div class="grid">${related.slice(0,10).map(card).join("")}</div></div>`:""}`;
+  scrollTo(0,0);
+
+  const p=$("#player"), pr=LS.get("progress",{});
+  if(pr[id]&&(!v.dur||pr[id]<v.dur-5)) p.addEventListener("loadedmetadata",()=>{p.currentTime=pr[id]},{once:true});
+  let last=0;
+  p.addEventListener("timeupdate",()=>{if(Date.now()-last>3000){last=Date.now();const x=LS.get("progress",{});x[id]=p.currentTime;LS.set("progress",x)}});
+  p.addEventListener("ended",()=>{const x=LS.get("progress",{});delete x[id];LS.set("progress",x);
+    if(related[0]){toast("Sıradaki: "+related[0].title);setTimeout(()=>location.hash="#/izle/"+related[0].id,1500)}});
+
+  const upd=()=>{
+    const l=S("likes")[id],d=S("dislikes")[id],f=S("favs")[id],sub=LS.get("sub",false),r=rating(id);
+    $("#likeBtn").classList.toggle("on",!!l); $("#disBtn").classList.toggle("on",!!d);
+    $("#pct").textContent=r===null?"Puan yok":r+"%"; $("#pbar").style.width=(r??0)+"%";
+    $("#favBtn").classList.toggle("on",!!f); $("#favBtn span").textContent=f?"Favorilerde":"Favori";
+    $("#subBtn").textContent=sub?"Abone olundu ✓":"Abone ol";
+  };
+  const tog=(k,o)=>{const s=S(k);s[id]=!s[id];LS.set(k,s);if(s[id]&&o){const x=S(o);delete x[id];LS.set(o,x)}upd()};
+  $("#likeBtn").onclick=()=>tog("likes","dislikes");
+  $("#disBtn").onclick=()=>tog("dislikes","likes");
+  $("#favBtn").onclick=()=>{tog("favs");toast(S("favs")[id]?"Favorilere eklendi":"Favorilerden çıkarıldı")};
+  $("#subBtn").onclick=()=>{LS.set("sub",!LS.get("sub",false));upd()};
+  $("#shareBtn").onclick=async()=>{const url=location.href;if(navigator.share){try{await navigator.share({title:v.title,url});return}catch(e){}}
+    try{await navigator.clipboard.writeText(url);toast("Bağlantı kopyalandı")}catch(e){toast(url)}};
+  if(v.local) $("#delBtn").onclick=async()=>{if(!confirm("Video bu cihazdan silinsin mi?"))return;await dbDel(id);videos=videos.filter(x=>x!==v);toast("Silindi");location.hash="#/"};
+  const th=LS.get("theater",false);
+  $(".watch").classList.toggle("theater",th); $("#thBtn").classList.toggle("on",th);
+  $("#thBtn").onclick=()=>{const on=!$(".watch").classList.contains("theater");LS.set("theater",on);
+    $(".watch").classList.toggle("theater",on);$("#thBtn").classList.toggle("on",on)};
+  const sp=LS.get("speed",1); p.playbackRate=sp; $("#speed").value=sp;
+  $("#speed").onchange=e=>{p.playbackRate=+e.target.value;LS.set("speed",+e.target.value)};
+  upd(); comments(id);
+}
+
+function comments(id){
+  const list=LS.get("comments",{})[id]||[];
+  $("#cTitle").textContent="Yorumlar ("+list.length+")";
+  $("#cList").innerHTML=list.map((c,i)=>({c,i})).reverse().map(({c,i})=>`<div class="cmt"><div class="av">S</div><div>
+    <b>Sen</b><small>${ago(c.t)}</small><p>${esc(c.text)}</p><button class="del" data-del="${i}">Sil</button></div></div>`).join("");
+  $("#cform").onsubmit=e=>{e.preventDefault();const t=$("#cIn").value.trim();if(!t)return;
+    const a=LS.get("comments",{});(a[id]=a[id]||[]).push({text:t,t:Date.now()});LS.set("comments",a);comments(id)};
+  $$("[data-del]").forEach(b=>b.onclick=()=>{const a=LS.get("comments",{});a[id].splice(+b.dataset.del,1);LS.set("comments",a);comments(id)});
+}
+
+/* ---------- Olaylar ---------- */
+document.addEventListener("click",e=>{
+  const o=e.target.closest("[data-open]"); if(o){location.hash="#/izle/"+o.dataset.open;return}
+  const c=e.target.closest("[data-cat]"); if(c){cat=c.dataset.cat;page=1;render();return}
+  const s=e.target.closest("[data-sort]"); if(s){sort=s.dataset.sort;page=1;render();return}
+  const pg=e.target.closest("[data-page]"); if(pg&&!pg.disabled){page=+pg.dataset.page;render();return}
+  const t=e.target.closest("[data-tag]"); if(t){$("#q").value=t.dataset.tag;location.hash="#/";render();return}
+  if(e.target.closest("#clearHist")){LS.set("history",[]);render()}
+  if(e.target.closest(".slot")) toast("Bu alana video yüklemek için GitHub'a "+e.target.closest(".slot").title.replace(" bekleniyor","")+" ekle");
+});
+if(matchMedia("(hover:hover)").matches){
+  document.addEventListener("mouseover",e=>{const v=e.target.closest(".card")?.querySelector("video[data-prev]");
+    if(v&&!v._p){v._p=1;v._t=setTimeout(()=>{v.currentTime=0;v.play().catch(()=>{})},350)}});
+  document.addEventListener("mouseout",e=>{const b=e.target.closest(".card");if(!b||b.contains(e.relatedTarget))return;
+    const v=b.querySelector("video[data-prev]");if(v){clearTimeout(v._t);v._p=0;v.pause();v.currentTime=.5}});
+}
+addEventListener("hashchange",()=>{page=1;render()});
+let st;
+$("#q").oninput=()=>{clearTimeout(st);st=setTimeout(()=>{page=1;if(route().page!=="home")location.hash="#/";else render()},250)};
+$("#searchForm").onsubmit=e=>{e.preventDefault();$("#q").blur();page=1;
+  if($("#sType").value==="Kategoriler"){const m=KATEGORILER.find(c=>c.toLowerCase().includes($("#q").value.trim().toLowerCase()));if(m){$("#q").value="";location.hash="#/kategori/"+encodeURIComponent(m);return}}
+  if(route().page!=="home")location.hash="#/";else render()};
+addEventListener("keydown",e=>{
+  if(e.key==="Escape")closeUp();
+  if(e.target.matches("input,textarea,select"))return;
+  if(e.key==="/"){e.preventDefault();$("#q").focus()}
+  const p=$("#player");if(!p)return;
+  if(e.key===" "||e.key==="k"){e.preventDefault();p.paused?p.play():p.pause()}
+  else if(e.key==="ArrowLeft")p.currentTime-=5; else if(e.key==="ArrowRight")p.currentTime+=5;
+  else if(e.key==="f")document.fullscreenElement?document.exitFullscreen():p.requestFullscreen?.();
+  else if(e.key==="m")p.muted=!p.muted;
+});
+
+/* ---------- Cihaza yükleme ---------- */
+let picked=null;
+$("#upCat").innerHTML=KATEGORILER.map(c=>`<option>${c}</option>`).join("");
+const openUp=()=>$("#modal").classList.add("show");
+function closeUp(){$("#modal").classList.remove("show");picked=null;$("#fileIn").value="";$("#fileName").textContent="";$("#upTitle").value="";$("#upDesc").value=""}
+$("#uploadBtn").onclick=openUp; $("#uploadBtn2").onclick=openUp;
+addEventListener("scroll",()=>$("#totop").classList.toggle("show",scrollY>600),{passive:true});
+$("#totop").onclick=()=>scrollTo({top:0,behavior:"smooth"});
+addEventListener("keydown",e=>{if(e.key==="t"&&!e.target.matches("input,textarea,select"))$("#thBtn")?.click()}); $("#closeModal").onclick=closeUp; $("#cancelUp").onclick=closeUp;
+$("#modal").onclick=e=>{if(e.target.id==="modal")closeUp()};
+const drop=$("#drop"); drop.onclick=()=>$("#fileIn").click();
+function pick(f){if(!f||!f.type.startsWith("video/"))return toast("Lütfen bir video dosyası seç");picked=f;
+  $("#fileName").textContent=f.name+" · "+(f.size/1048576).toFixed(1)+" MB";if(!$("#upTitle").value)$("#upTitle").value=f.name.replace(/\.[^.]+$/,"")}
+$("#fileIn").onchange=e=>pick(e.target.files[0]);
+drop.ondragover=e=>{e.preventDefault();drop.classList.add("over")};
+drop.ondragleave=()=>drop.classList.remove("over");
+drop.ondrop=e=>{e.preventDefault();drop.classList.remove("over");pick(e.dataTransfer.files[0])};
+$("#doUp").onclick=async()=>{
+  if(!picked)return toast("Önce bir video seç");
+  const meta=await probe(URL.createObjectURL(picked));
+  const v={id:"c"+Date.now(),blob:picked,title:$("#upTitle").value.trim()||picked.name,category:$("#upCat").value,desc:$("#upDesc").value.trim(),date:Date.now(),dur:meta.dur||0};
+  const ok=await dbPut(v);
+  videos.unshift({...v,src:URL.createObjectURL(picked),ok:true,tags:[],local:true});
+  closeUp(); toast(ok?"Video yüklendi":"Yüklendi (yenileyince kaybolur)"); location.hash="#/izle/"+v.id;
+};
+
+init();
+</script>
+</body>
+</html>
